@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--
+ - Copyright 2014 Neustar, Inc.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Differential Privacy: The Basics – Neustar Research Blog</title>
+<link rel="stylesheet" href="http://s0.wp.com/wp-content/themes/premium/minimum/style.css?m=1358482073g" type="text/css" media="screen" />
+<link rel='stylesheet' id='googlefont-droid-serif-css'  href='http://fonts.googleapis.com/css?family=Droid+Serif&ver=1.0.0' type='text/css' media='all' />
+<link rel='stylesheet' id='googlefont-oswald-css'  href='http://fonts.googleapis.com/css?family=Oswald&ver=1.0.0' type='text/css' media='all' />
+<link rel='stylesheet' id='all-css-4' href='http://s2.wp.com/_static/??-eJxtjEEOgyAQAD/kujFYw6XpWxZLgQYWwq7x+9qDp3qay8zg3mCtrJ4VywYtbyGxIFf1gvQuicFRh+5Fx1VkwHu/VVH4ZEodJVJPHC7+VRp9Od9xxpCro/wTXuU5mYc1djZm+R4seTW6' type='text/css' media='all' />
+<link rel='stylesheet' id='all-css-0' href='http://s1.wp.com/wp-content/mu-plugins/highlander-comments/style.css?m=1343991657g' type='text/css' media='all' />
+<link rel="stylesheet" id="custom-css-css" type="text/css" href="http://research.neustar.biz/?custom-css=1&#038;csblog=1vwzq&#038;cscache=6&#038;csrev=109" />
+<link rel="stylesheet" id="density-css" type="text/css" href="DensityWidget.css" />
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="d3.legend.js"></script>
+<script src="DensityWidget.js"></script>
+
+</head>
+<body class="single single-post postid-2424 single-format-standard logged-in admin-bar no-customize-support typekit-enabled custom-header header-image header-full-width full-width-content highlander-enabled highlander-light">
+<div id="wrap">
+<div id="header">
+    <div class="wrap">
+        <div id="title-area">
+            <p id="title"><a href="http://research.neustar.biz/" title="Research">Research</a></p>
+        </div><!-- end #title-area -->
+    </div><!-- end .wrap -->
+</div><!--end #header-->
+<div id="inner">
+    <div id="content-sidebar-wrap">
+        <div id="content" class="hfeed">
+            <div class="post-2424 post type-post format-standard hentry category-data-science">
+                <h2 class="entry-title">
+                    <a href="http://research.neustar.biz/2014/09/08/differential-privacy-the-basics/" title="Differential Privacy: The Basics" rel="bookmark">Differential Privacy: The Basics</a>
+                </h2>
+                <div class="post-info">
+                    <span class="date published time" title="2014-09-08T10:00:00+00:00">SEPTEMBER 8, 2014</span>
+                    By <span class="author vcard"><span class="fn"><a href="http://research.neustar.biz/author/atockar/" class="fn n" title="atockar" rel="author">ATOCKAR</a></span></span>
+                    <span class="post-comments"><a href="http://research.neustar.biz/2014/09/08/differential-privacy-the-basics/#comments">Leave a Comment</a></span>
+                </div>
+                <div class="entry-content">
+                    <div id="densityplot" class="aligncenter"></div>
+                      <div id="holder"></div>
+                      <!-- Drop down menu to select distribution -->
+                      <select id = "distribution" class = "select" onchange = 'refreshRaw()'>
+                        <option value="n01">Random Variables --> Normal(0,1)</option>
+                        <option value="n50100">Random Variables --> Normal(50,100)</option>
+                        <option value="u01">Random Variables --> Uniform(0,1)</option>
+                        <option value="g22">Random Variables --> Exponential(2)</option>
+                        <option value="bounded_latitude.csv">NYC Taxi --> Latitude</option>
+                        <option value="bounded_longitude.csv">NYC Taxi --> Longitude</option>
+                        <option value="bounded_tip.csv">NYC Taxi --> Tip Amount</option>
+                        <option value="bounded_totalfare.csv">NYC Taxi --> Total Fare</option>
+                      </select>
+
+                      <div class="eps">ε</div>
+                      <input id="budgetSlider" type="range" min="0.02" max="2" value = "0.5" step = "0.02" onchange="refreshNoise()"/><input id="budgetTBox" type="text" class="txtbx" size="1"/>
+                      <button onclick = 'refreshNoise()'>Refresh Noise</button>
+                      <button onclick = 'refreshRaw()'>Refresh Distribution</button>
+                      <p></p><h4>Description</h4>
+                      <p>
+                        The graph above is the kernel density function of the chosen distribution. I have included randomly generated numbers as well as some variables sampled* from the NYC taxi dataset for illustrative purposes. The blue dashed line represents the raw distribution, while the red line shows what happens to its shape when differential privacy is applied. The slider reflects <i>ε</i>, our privacy parameter.</p>
+                      <p>
+                        Notice how as the privacy parameter decreases, the distribution becomes increasingly random. Features of the distribution, such as peaks and troughs, start to flatten out, while other (nonsense) features appear. Refreshing the noise makes this clearer. Conversely, as <i>ε</i> increases, the noise distribution starts to match the raw data more closely.</p>
+                      <h4>Privacy calculation</h4>                      
+                      <p>
+                        So how do we calculate how much noise to add? Let's consider the query. In order to map the entire distribution of our sample, our query is just the identity function: <i>Q(D) = D</i>. Now, our sensitivity calculation requires that we consider the change in the query when one record is removed. If we strictly apply the formula, we run into trouble. After all, we cannot compare sets of different lengths. So how can we get around this? How about if we were to turn our query into some kind of aggregation? This would allow us to compare <i>Q(D)</i> and <i>Q(D')</i>, as required by the sensitivity formula.</p>
+                      <p>
+                        The noble histogram supplies our aggregation mechanism. By splitting our distribution into several evenly-sized buckets (I have used <i>100</i> in this example) and counting the number of values that fall into each bucket, we have a framework for privatizing this query. Consider what would happen if we removed one record - any record. The count in one of our buckets would decrease by 1, while all the others will stay the same. Therefore our sensitivity is 1.**</p>
+                      <p>
+                        It is now straightforward to add <i>Laplace(1/ε)</i> random variables to the count in each bucket. We can then translate these counts back into a kernel density plot to complete the illustration.</p>
+                      <p style="font-size:12px">
+                        <i>* I bounded the sample to take reasonable values to ensure erroneous or outlying entries did not spoil the visualization. This also simplified the privatization, as unlikely or impossible values were essentially excluded from the universe of possible outcomes.
+                        </i></p>
+                      <p style="font-size:12px">
+                        <i>** Technically, for the taxi queries, the sensitivity could be more than 1, as we would be interested in the difference if 1 </i>individual<i> were to be removed from the dataset (as opposed to 1 cab ride). Depending on our end user, this individual could represent a passenger, taxi driver or even medallion number.
+                        </i></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script>init();</script>
+</body>
+</html>

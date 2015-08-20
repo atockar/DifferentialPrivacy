@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--
+ - Copyright 2014 Neustar, Inc.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Riding with the Stars: Passenger Privacy in the NYC Taxicab Dataset – Neustar Research Blog</title>
+<link rel="stylesheet" href="http://s0.wp.com/wp-content/themes/premium/minimum/style.css?m=1358482073g" type="text/css" media="screen" />
+<link rel='stylesheet' id='googlefont-droid-serif-css'  href='http://fonts.googleapis.com/css?family=Droid+Serif&ver=1.0.0' type='text/css' media='all' />
+<link rel='stylesheet' id='googlefont-oswald-css'  href='http://fonts.googleapis.com/css?family=Oswald&ver=1.0.0' type='text/css' media='all' />
+<link rel='stylesheet' id='all-css-4' href='http://s2.wp.com/_static/??-eJxtjEEOgyAQAD/kujFYw6XpWxZLgQYWwq7x+9qDp3qay8zg3mCtrJ4VywYtbyGxIFf1gvQuicFRh+5Fx1VkwHu/VVH4ZEodJVJPHC7+VRp9Od9xxpCro/wTXuU5mYc1djZm+R4seTW6' type='text/css' media='all' />
+<link rel='stylesheet' id='all-css-0' href='http://s1.wp.com/wp-content/mu-plugins/highlander-comments/style.css?m=1343991657g' type='text/css' media='all' />
+<link rel="stylesheet" id="custom-css-css" type="text/css" href="http://research.neustar.biz/?custom-css=1&#038;csblog=1vwzq&#038;cscache=6&#038;csrev=109" />
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css"/>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+<script src="http://www.mapquestapi.com/sdk/leaflet/v1.0/mq-map.js?key=Fmjtd%7Cluur25uanh%2C8a%3Do5-9w7xq0"></script>
+<script src="http://www.mapquestapi.com/sdk/leaflet/v1.0/mq-routing.js?key=Fmjtd%7Cluur25uanh%2C8a%3Do5-9w7xq0"></script>
+<script src="celebRaw.js"></script>
+
+<style>
+#tooltip {
+  color: white;
+  font-size: 12px;
+  opacity: .9;
+  background: #333;
+  padding: 2px;
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  position: absolute;
+  z-index: 10;
+  visibility: hidden;
+  pointer-events: none;
+}
+</style>
+<script>
+// Set size of map
+var margin = {top: 20, right: 20, bottom: 30, left: 50},
+  width = 600 - margin.left - margin.right,
+  height = 400 - margin.top - margin.bottom;
+
+// Coordinates of Bradley Cooper's trip
+var coords = [
+      {coordinate: "-74.010338,40.719608", type: "Start", trip: 1, address: "375 Greenwich St<br/>New York, NY<br/>"}, {coordinate: "-74.00238,40.737175", type: "End", trip: 1, address: "11 Bank St<br/>New York, NY<br/>"}
+      ];
+</script>
+</head>
+<body class="single single-post postid-2424 single-format-standard logged-in admin-bar no-customize-support typekit-enabled custom-header header-image header-full-width full-width-content highlander-enabled highlander-light">
+<div id="wrap">
+<div id="header">
+    <div class="wrap">
+        <div id="title-area">
+            <p id="title"><a href="http://research.neustar.biz/" title="Research">Research</a></p>
+        </div><!-- end #title-area -->
+    </div><!-- end .wrap -->
+</div><!--end #header-->
+<div id="inner">
+    <div id="content-sidebar-wrap">
+        <div id="content" class="hfeed">
+            <div class="post-2424 post type-post format-standard hentry category-data-science">
+                <h2 class="entry-title">
+                    <a href="http://research.neustar.biz/2014/09/15/riding-with-the-stars-passenger-privacy-in-the-nyc-taxicab-dataset/" title="Riding with the Stars: Passenger Privacy in the NYC Taxicab Dataset" rel="bookmark">Riding with the Stars: Passenger Privacy in the NYC Taxicab Dataset</a>
+                </h2>
+                <div class="post-info">
+                    <span class="date published time" title="2014-09-15T09:30:00+00:00">SEPTEMBER 15, 2014</span>
+                    By <span class="author vcard"><span class="fn"><a href="http://research.neustar.biz/author/atockar/" class="fn n" title="atockar" rel="author">ATOCKAR</a></span></span>
+                    <span class="post-comments"><a href="http://research.neustar.biz/2014/09/15/riding-with-the-stars-passenger-privacy-in-the-nyc-taxicab-dataset/#comments">Leave a Comment</a></span>
+                </div>
+                <div class="entry-content">
+                    <div id="cooperRaw" class="aligncenter"></div>
+                      <div id="map" display="block"></div>
+                      <div id="tooltip"></div>
+                    </div>
+                    <p>Bradley Cooper's taxi trip on 8 July, 2013</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script>init(coords);</script>
+</body>
+</html>

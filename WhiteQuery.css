@@ -1,0 +1,105 @@
+/*
+ - Copyright 2014 Neustar, Inc.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ */
+.tabl {
+  font-family: Sans-Serif;
+  margin: 5px;
+  border-collapse: collapse;
+  color: #5e7185;
+  width: 600px;
+}.tabl th {
+  text-align: center;
+  padding: 8px 2px;
+  font-weight: bold;
+  font-size: 14px;
+  border-bottom: 1px solid #5e7185;
+}.tabl th:first-child {
+  border-bottom: 0px;
+}.tabl td {
+  text-align: right;
+  font-size: 12px;
+  padding: 12px 5px 0px 5px;
+  width: 80px;
+}
+.eps {
+  margin-left: 5px;
+  vertical-align: -1px;
+  display: inline;
+  font: 14px sans-serif;
+}
+input[type="range"]{
+  background: #e7f3ff;
+  width: 120px;
+  height: 5px;
+  -webkit-appearance: none;
+  border-radius: 8px;
+  -moz-border-radius: 8px;
+  -wekkit-border-radius: 8px;
+  -webkit-box-shadow: inset 0px 0px 1px 1px rgba(0, 0, 0, 0.9), 0px 1px 1px 0px rgba(255, 255, 255, 0.13);
+  -moz-box-shadow: inset 0px 0px 1px 1px rgba(0, 0, 0, 0.9), 0px 1px 1px 0px rgba(255, 255, 255, 0.13);
+  box-shadow: inset 0px 0px 1px 1px rgba(0, 0, 0, 0.9), 0px 1px 1px 0px rgba(255, 255, 255, 0.13);
+}
+input[type="range"]:hover{
+  background: #b5daff;
+}
+input[type="range"]::-webkit-slider-thumb{
+ -webkit-appearance:none !important;  
+ width:20px;
+ height:15px;
+ -webkit-appearance: none;
+  border-radius: 8px;
+  -moz-border-radius: 8px;
+  -wekkit-border-radius: 8px;
+  border:1px solid black;
+  background: #c9e5ff;
+}
+input[type="range"]::-webkit-slider-thumb:hover{
+  background: #839db8;
+}
+.buttn {
+  vertical-align: -1px;
+}
+.txtbx {
+  border: 0px;
+  vertical-align: -2px;
+  margin-left: 4px;
+  font-size: 14px;
+  font-family: sans-serif;
+}
+.histdiv {
+  margin-left: 80px;
+}
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.axis text {
+  fill: black;
+  font-size: 11px;
+}
+.bar rect {
+  fill: #855e71;
+  shape-rendering: crispEdges;
+}
+.bar text {
+  font: 12px sans-serif;
+  text-anchor: middle;
+}
+.footer {
+  margin-top: -25px;
+  width: 650px;
+  font-size: 12px;
+}

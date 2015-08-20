@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--
+ - Copyright 2014 Neustar, Inc.
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Riding with the Stars: Passenger Privacy in the NYC Taxicab Dataset – Neustar Research Blog</title>
+<link rel="stylesheet" href="http://s0.wp.com/wp-content/themes/premium/minimum/style.css?m=1358482073g" type="text/css" media="screen" />
+<link rel='stylesheet' id='googlefont-droid-serif-css'  href='http://fonts.googleapis.com/css?family=Droid+Serif&ver=1.0.0' type='text/css' media='all' />
+<link rel='stylesheet' id='googlefont-oswald-css'  href='http://fonts.googleapis.com/css?family=Oswald&ver=1.0.0' type='text/css' media='all' />
+<link rel='stylesheet' id='all-css-4' href='http://s2.wp.com/_static/??-eJxtjEEOgyAQAD/kujFYw6XpWxZLgQYWwq7x+9qDp3qay8zg3mCtrJ4VywYtbyGxIFf1gvQuicFRh+5Fx1VkwHu/VVH4ZEodJVJPHC7+VRp9Od9xxpCro/wTXuU5mYc1djZm+R4seTW6' type='text/css' media='all' />
+<link rel='stylesheet' id='all-css-0' href='http://s1.wp.com/wp-content/mu-plugins/highlander-comments/style.css?m=1343991657g' type='text/css' media='all' />
+<link rel="stylesheet" id="custom-css-css" type="text/css" href="http://research.neustar.biz/?custom-css=1&#038;csblog=1vwzq&#038;cscache=6&#038;csrev=109" />
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
+<link rel="stylesheet" href="QueriesWidget.css" />
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.3.0"></script>
+<script src="d3.legend.js"></script>
+<script src="QueriesGlobal.js"></script>
+<script src="QueriesHours.js"></script>
+<script src="QueriesIncome.js"></script>
+<script src="QueriesPickups.js"></script>
+<script src="PickupsData.js"></script>
+<script src="QueriesChord.js"></script>
+
+</head>
+<body class="single single-post postid-2424 single-format-standard logged-in admin-bar no-customize-support typekit-enabled custom-header header-image header-full-width full-width-content highlander-enabled highlander-light">
+<div id="wrap">
+<div id="header">
+    <div class="wrap">
+        <div id="title-area">
+            <p id="title"><a href="http://research.neustar.biz/" title="Research">Research</a></p>
+        </div><!-- end #title-area -->
+    </div><!-- end .wrap -->
+</div><!--end #header-->
+<div id="inner">
+    <div id="content-sidebar-wrap">
+        <div id="content" class="hfeed">
+            <div class="post-2424 post type-post format-standard hentry category-data-science">
+                <h2 class="entry-title">
+                    <a href="http://research.neustar.biz/2014/09/15/riding-with-the-stars-passenger-privacy-in-the-nyc-taxicab-dataset/" title="Riding with the Stars: Passenger Privacy in the NYC Taxicab Dataset" rel="bookmark">Riding with the Stars: Passenger Privacy in the NYC Taxicab Dataset</a>
+                </h2>
+                <div class="post-info">
+                    <span class="date published time" title="2014-09-15T09:30:00+00:00">SEPTEMBER 15, 2014</span>
+                    By <span class="author vcard"><span class="fn"><a href="http://research.neustar.biz/author/atockar/" class="fn n" title="atockar" rel="author">ATOCKAR</a></span></span>
+                    <span class="post-comments"><a href="http://research.neustar.biz/2014/09/15/riding-with-the-stars-passenger-privacy-in-the-nyc-taxicab-dataset/#comments">Leave a Comment</a></span>
+                </div>
+                <div class="entry-content">
+                    <div id="querieswidget" class="aligncenter"></div>
+                      <div class = "toggle-btn-grp">
+                        <div><input type="radio" name="queries" id="hours" checked onchange="hours()"/><label>Average Speed</label></div>
+                        <div><input type="radio" name="queries" id="driverIncome" onchange="driverIncome()"/><label>Driver Income</label></div>
+                        <div><input type="radio" name="queries" id="pickups" onchange="pickups()"/><label>Pickup Locations</label></div>
+                        <div><input type="radio" name="queries" id="chord" onchange="chord()"/><label>Trip Popularity</label></div>
+                      </div>
+                      <div class="hline"></div>
+
+                      <div id="allMap"></div>
+                      <div id="indMap"></div>
+                      <div id="holder"></div>
+
+                      <button onclick = 'refreshNoise()' class = "refbutton" id = "refbutton">Refresh Noise</button>
+                      <div class="eps">ε</div>
+                      <input id="budgetSlider" type="range" min="0.02" max="5" value = "0.5" step = "0.02" onchange="refreshNoise()"/><input id="budgetTBox" type="text" class="txtbx" size="5"/>
+                      <div id="tooltip" class = "tooltip"></div>
+                      <div class="footer">
+                        <p><br>The NYC taxicab dataset is a rich and diverse source of information, and there has been some <a href="http://www.reddit.com/r/bigquery/comments/28ialf/173_million_2013_nyc_taxi_rides_shared_on_bigquery/" target="_blank">talk online</a> about some of its more interesting features. The visualizations above display some of these features, and the effects of applying differential privacy to these findings both in aggregate and at the individual level.</p>
+                      </div>
+                      <div id="hoursText" class="footer">
+                        <h3>Chart description</h3>
+                        <p>This graph shows the average speed driven per hour of the day by taxi drivers in NYC. The top graph is the average for all drivers, while the bottom shows the average speed over the year for just one driver.</p>
+                        <p>One can see an interesting (if not unexpected) pattern - between the busy hours of 8am and 6pm taxis crawl around at an average of 12mph, after which traffic becomes more managable and the average speed increases, reaching a peak at 5am, after which it begins to slow down again.</p>
+                        <p>From a privacy perspective, it is clear that the speed for all drivers does not change even with the most stringent privacy settings. This is intuitive - with roughly 40,000 drivers in New York, the removal of 1, even if he is the fastest driver, has a negligible effect on the average.</p>
+                        <p>It is a different story at the individual level. Play with the slider to see the effect on the privatized result. The speed varies wildly at low <i>ε</i> levels, but does approach the true value as <i>ε</i> increases. Therefore, by choosing a reasonable privacy budget, one can still extract meaningful and accurate information while protecting the individual.</p>
+                        <h3>Calculation details</h3>
+                        <p class='nospace'>This is the query used to obtain the true averages:</p>
+                        <div class='indent'><code>SELECT HOUR(TIMESTAMP(pickup_datetime)) AS hour,
+                          <br>&nbsp;&nbsp;ROUND(AVG(trip_distance/trip_time_in_secs*60*60),3) AS speed
+                          <br>FROM tripData
+                          <br>WHERE trip_time_in_secs > 10 AND trip_distance < 90 AND speed < 70
+                          <br>&nbsp;&nbsp;<i>AND hack_license = "39C68074F40525E67E6328A533836A90"</i> /*for individual query*/
+                          <br>GROUP BY hour
+                          <br>ORDER BY hour</code></div>
+                        <p>To privatize this for all drivers, noise is added to each of the 24 averages. The sensitivity calculation is as straightforward as considering what the greatest change in the average (of any of the points) will be with the removal of an individual from the dataset. This yields the highly benign sensitivity of <i>0.000003844</i>.</p>
+                        <p>The treatment is different for the individual. As explained in the appendix to this post, we should not simply add noise to the true averages. Rather, we create a series of buckets (I created one for each speed from 8 to 25mph) and increment the bucket by 1 for each actual value that falls in that bucket. Because we are considering each of the 24 hours of the day independently, there are 24 sets of buckets - and our count is 1 at most. Privatizing is as simple as adding <i>Laplace(1/ε)</i> noise to each of the counts. Technically I should display the whole histogram but it makes much more sense here to just plot the bucket with the highest privatized count, which you can see in the graph.</p>
+                        <p>For more details, view the source code behind this page.</p></div>
+                      <div id="incomeText" class="footer">
+                        <h3>Chart description</h3>
+                        <p>The graph above shows the raw and privatized results from querying an individual driver's income. I have included 10 examples here for illustration, although in reality of course the privacy budget will decrease with each query, due to composition.</p>
+                        <p>What can clearly be seen here is that when <i>ε</i> is low, the results are highly varied, and show little to no correlation with the true values. By clicking "Refresh Noise", we can see how much they vary. With a high privacy parameter, we can get a lot closer, but, as noted below, the accuracy of our answer is bounded by the width of our histogram intervals.</p>
+                        <p>More interesting here from a privacy perspective are the two horizontal lines that represent the true and privatized average incomes respectively. Even with the strictest privacy parameter, the privatized average does not stray too far from the true average. This makes intuitive sense from the context of differential privacy, as no individual's privacy is jeopardised by knowledge of the average.</p>
+                        <h3>Calculation details</h3>
+                        <p class = 'nospace'>The individual averages were privatized by considering a query that asks for total income for a certain driver: e.g.</p>
+                        <div class = 'indent'><code>SELECT SUM(total_amount)
+                          <br>FROM tripFare
+                          <br>WHERE hack_license = 'A81AB69E50BD54D76B7D6B8A7FD25F6A';</code></div>
+                        <p>As has been the case with other point queries (<i>note that this is still a point query, as although we are aggregating over taxi rides, we are considering individual drivers as our true data point</i>), for each driver we create a set of buckets over a reasonable range, and increment the count in the bucket containing their actual income. In this case I chose $10,000-wide buckets up to $150,000, and privatized the counts by adding a <i>Laplace(1/ε)</i> random variable to the actual count. The chart shows the midpoint of the bucket with the highest privatized count.</p>
+                        <p>The overall average was privatized differently, as it is a true aggregation. Differential privacy is applied by adding a <i>Laplace(sensitivity/ε)</i> random variable to the true average. The sensitivity is obtained by asking, <i>"how much would the average change if the most different (in this case the highest earner) was removed from the dataset?"</i> This is <i>$15.55</i>, and explains why the change in the average is so small.</p></div>
+                      <div id="pickupsText" class="footer">
+                        <h3>Visualization description</h3>
+                        <p>The maps above show the top 100 pickup locations for all drivers (left) and one specific driver (right). The circles represent the actual locations, while the grid squares show the result of privatization.</p>
+                        <p>This data is certainly interesting from an urban study perspective, but could also be used by an adversary to locate a particular taxi driver. For example, by hanging out near 40th & 8th, I would have a high chance of coming across this particular driver.</p>
+                        <p>By adding noise, privacy is assured, as it is no longer possible to locate exact pickup coordinates. As in my other examples, the effect of <i>ε</i> is negligible when looking at all drivers, but on the individual basis it would take an incredibly lenient privacy budget to reveal the true data. The use of a grid further fuzzifies the results, and has been chosen to best balance privacy and accuracy.
+                       </p>
+                        <h3>Calculation details</h3>
+                        <p class='nospace'>The true coordinates were obtained with the following query:</p>
+                        <div class='indent'><code>SELECT CONCAT(ROUND(pickup_longitude,3),',',ROUND(pickup_latitude,3)) AS coordinate,
+                          <br>&nbsp;&nbsp;COUNT(*) AS cnt
+                          <br>FROM tripData
+                          <br><i>WHERE hack_license = "39C68074F40525E67E6328A533836A90"</i> /*for individual query*/
+                          <br>GROUP BY coordinate
+                          <br>ORDER BY cnt DESC
+                          <br>LIMIT 100;</code></div>
+                        <p>The privacy calculation is very similar to that done for the celebrity queries. A grid was laid across the map, and the count of actual pickups in each square was recorded. A Laplace random variable was added to the count in each square, although here, unlike our other examples, the sensitivity is not equal to 1. Rather, the sensitivity here represents the maximum pickups for any one driver in any location. Examination of the data revealed this to be in the region of <i>3,000</i> (which is in itself an interesting result, and explains why our individual map is so unstable when privatized).</p>
+                      </div>
+                      <div id="chordText" class="footer">
+                        <h3>Chart description</h3>
+                        <p>The chord diagram above shows 2013 taxi rides* between the following 6 neighborhoods: <i>East Village, Greenwich Village, Little Italy, Lower East Side, SoHo </i>and</i> West Village</i>. The arcs on the outside represent the total trips taken from the neighborhood, while the chords reflect the number of trips between each source and destination.</p>
+                        <p>The privatized version is again interesting in that it emphasises the importance of the privacy parameter <i>ε</i>. At low levels of privacy there is little change in the diagram, while with strict privacy (<i>ε</i> is small) the results are much less meaningful. Clearly, the optimal result lies somewhere between these two extremes.</p>
+                        <p>It is left to the reader to consider why our aggregate results here are perhaps not quite as stable as seen in the other 3 diagrams.</p>
+                        <p>*<i>Note that this data is for illustration only, as it was taken from a subset of the NYC taxi dataset.</i></p>
+                        <h3>Calculation details</h3>
+                        <p>In this case, the query returns a matrix A, with each element A<sub><i>ij</i></sub> reflecting the number of trips from the source <i>i</i> to the destination <i>j</i>. As such, there are 6x6=36 counts returned by this query, and the sensitivity is given by the maximum change to this matrix that could occur with the elimination of 1 driver - and is thus equal to the maximum number of trips taken by any one driver in these neighborhoods.</p>
+                        <p>Since I have subset the dataset by time for this query, I need only consider the maximum trips taken within this subset - which yields <i>18</i>. Adding a <i>Laplace(18/ε)</i> random variable to each point in the matrix guarantees differential privacy.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script>init();</script>
+</body>
+</html>
